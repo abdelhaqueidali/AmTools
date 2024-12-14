@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ber">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ⴰⵎⵙⵏⴼⵍ ⵏ ⵡⵓⵟⵟⵓⵏⵏ ⵖⵔ ⵜⵎⴰⵣⵉⵖⵜ</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ⵓⵟⵟⵓⵏⵏ ⵖⵔ ⵜⵉⵔⵔⴰ</h1>
+        <input type="number" id="numberInput" placeholder="ⴰⵔⴰ ⴳⵔ ⵓⵎⵢⴰ ⴰⵔ ⴰⵜⵔⵉⵍⵢⴰⵕ">
+        <button onclick="convertNumber()">ⵙⵏⴼⵍ</button>
+        <div id="result"></div>
+        <p/>
+        <button onclick="copyResult()">ⵙⵙⵏⵖⵍ</button>
+    </div>
+    <script>
+        function convertNumber() {
+            const number = document.getElementById('numberInput').value;
+            const result = document.getElementById('result');
+            
+            if (number === '') {
+                result.textContent = 'ⵓⵔ ⵜⴰⵔⵉⵎ/ⵜ ⵡⴰⵍⵓ, ⴰⵔⴰⵎ/ⵜ ⴽⵔⴰ ⵏ ⵡⵓⵟⵟⵓⵏ.';
+                return;
+            }
+
+            const num = parseInt(number);
+            if (isNaN(num) || num < 0 || num > 999999999999999) {
+                result.textContent = 'ⵖⴰⵙ ⴳⵔ ⵥⵉⵕⵓ ⴰⵔ ⴰⵜⵔⵉⵍⵢⵓⵏ';
+                return;
+            }
+
+            result.textContent = numberToTamazight(num);
+        }
+
+        function numberToTamazight(num) {
+            const units = ['', 'ⵢⴰⵏ', 'ⵙⵉⵏ', 'ⴽⵕⴰⴹ', 'ⴽⴽⵓⵥ', 'ⵙⵎⵎⵓⵙ', 'ⵚⴹⵉⵚ', 'ⵙⴰ', 'ⵜⴰⵎ', 'ⵜⵥⴰ'];
+            const tens = ['', 'ⵎⵔⴰⵡ', 'ⵙⵉⵎⵔⴰⵡ', 'ⴽⵕⴰⵎⵔⴰⵡ', 'ⴽⴽⵓⵥⵎⵔⴰⵡ', 'ⵙⵎⵎⵓⵎⵔⴰⵡ', 'ⵚⴹⵉⵎⵔⴰⵡ', 'ⵙⴰⵎⵔⴰⵡ', 'ⵜⴰⵎⵔⴰⵡ', 'ⵜⵥⴰⵎⵔⴰⵡ'];
+
+            if (num === 0) return 'ⴰⵎⵢⴰ';
+            if (num === 100) return 'ⵜⵉⵎⵉⴹⵉ';
+            if (num === 1000) return 'ⵉⴼⴹ';
+            if (num === 1000000) return 'ⴰⴳⵏⴷⵉⴷ';
+            if (num === 1000000000) return 'ⴰⵎⵍⵢⴰⵕ';
+            if (num === 1000000000000) return 'ⴰⵜⵔⵉⵍⵢⵓⵏ';
+            if (num === 1000000000000000) return 'ⴰⵜⵔⵉⵍⵢⴰⵕ';
+            if (num === 1000000000000000000) return 'ⴰⴽⵯⴰⵏⵜⵉⵍⵢⵓⵏ';
+            if (num === 1000000000000000000000) return 'ⴰⴽⵯⴰⵏⵜⵉⵍⵢⴰⵕ';
+            let result = '';
+
+if (num > 1999999999999999999) {
+                result += numberToTamazight(Math.floor(num / 1000000000000000000)) + ' ';
+                result += 'ⵉⴽⵯⴰⵏⵜⵉⵍⵢⵓⵏⵏ';
+                if (num % 1000000000000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000000000000;
+            } else if (num >= 1000000000000000000) {
+                result += numberToTamazight(Math.floor(num / 1000000000000000000)) + ' ';
+                result = 'ⴰⴽⵯⴰⵏⵜⵉⵍⵢⵓⵏ';
+                if (num % 1000000000000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000000000000;
+            }
+            
+if (num > 1999999999999999) {
+                result += numberToTamazight(Math.floor(num / 1000000000000000)) + ' ';
+                result += 'ⵉⵜⵔⵉⵍⵢⴰⵕⵏ';
+                if (num % 1000000000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000000000;
+            } else if (num >= 1000000000000000) {
+                result += numberToTamazight(Math.floor(num / 1000000000000000)) + ' ';
+                result = 'ⴰⵜⵔⵉⵍⵢⴰⵕ';
+                if (num % 1000000000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000000000;
+            }
+
+
+if (num > 1999999999999) {
+                result += numberToTamazight(Math.floor(num / 1000000000000)) + ' ';
+                result += 'ⵉⵜⵔⵉⵍⵢⵓⵏⵏ';
+                if (num % 1000000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000000;
+            } else if (num >= 1000000000000) {
+                result += numberToTamazight(Math.floor(num / 1000000000000)) + ' ';
+                result = 'ⴰⵜⵔⵉⵍⵢⵓⵏ';
+                if (num % 1000000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000000;
+            }
+
+
+if (num > 1999999999) {
+                result += numberToTamazight(Math.floor(num / 1000000000)) + ' ';
+                result += 'ⵉⵎⵍⵢⴰⵕⵏ';
+                if (num % 1000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000;
+            } else if (num >= 1000000000) {
+                result += numberToTamazight(Math.floor(num / 1000000000)) + ' ';
+                result = 'ⴰⵎⵍⵢⴰⵕ';
+                if (num % 1000000000 !== 0) result += ' ⴷ ';
+                num %= 1000000000;
+            }
+
+
+            if (num > 1999999) {
+                result += numberToTamazight(Math.floor(num / 1000000)) + ' ';
+                result += 'ⵉⴳⵏⴷⴰⴷ';
+                if (num % 1000000 !== 0) result += ' ⴷ ';
+                num %= 1000000;
+            } else if (num >= 1000000) {
+                result += numberToTamazight(Math.floor(num / 1000000)) + ' ';
+                result = 'ⴰⴳⵏⴷⵉⴷ';
+                if (num % 1000000 !== 0) result += ' ⴷ ';
+                num %= 1000000;
+            }
+
+            if (num > 1999) {
+                result += numberToTamazight(Math.floor(num / 1000)) + ' ';
+                result += 'ⵉⴼⴹⵏ';
+                if (num % 1000 !== 0) result += ' ⴷ ';
+                num %= 1000;
+            } else if (num >= 1000) {
+                result += ' ';
+                result += 'ⵉⴼⴹ';
+                if (num % 1000 !== 0) result += ' ⴷ ';
+                num %= 1000;
+            }
+
+            if (num >= 100) {
+                if (num <= 199) {
+                    result += 'ⵜⵉⵎⵉⴹⵉ';
+                } else if (num <= 299) {
+                    result += 'ⵙⵏⴰⵜ ⵜⵎⴰⴹ';
+                } else {
+                    result += units[Math.floor(num / 100)] + 'ⵜ ';
+                    result += 'ⵜⵎⴰⴹ';
+                }
+                if (num % 100 !== 0) result += ' ⴷ ';
+                num %= 100;
+            }
+
+            if (num >= 20) {
+                result += tens[Math.floor(num / 10)];
+                if (num % 10 !== 0) result += ' ⴷ ';
+                num %= 10;
+            } else if (num >= 10) {
+                result += 'ⵎⵔⴰⵡ';
+                if (num % 10 !== 0) result += ' ⴷ ';
+                num %= 10;
+            }
+
+            if (num > 0) {
+                result += units[num];
+            }
+
+            return result.trim();
+        }
+        
+        function copyResult() {
+    const result = document.getElementById('result').textContent;
+    if (result) {
+        navigator.clipboard.writeText(result)
+            .then(() => alert('ⵜⴻⵜⵜⵓⵙⵙⵏⵖⵍ!'))
+            .catch(err => alert('ⵓⵔ ⵉⵜⵜⵓⵙⵙⵏⵖⴰⵍ ⵢⴰⵜ! '));
+    } else {
+        alert('ⵓⵔ ⵉⵍⵍⵉ ⵎⴰⴷ ⵉⵜⵜⵓⵙⵙⵏⵖⴰⵍⵏ.');
+    }
+}
+    </script>
+</body>
+</html>
