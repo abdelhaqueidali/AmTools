@@ -1,0 +1,72 @@
+
+
+
+body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f7ff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width:100%;
+        }
+        
+        .container {
+            text-align: justify;
+            width: 90%;
+            padding: 20px;
+            margin: 20px auto;
+            background-color: #ffffff;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        .lesson {
+            padding: 20px;
+            border-bottom: 24px solid #b3e0ff;
+        }
+        .lesson-title {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #0077be;
+        }
+
+        header {
+            background-color: #0077be;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            font-size: 32px;
+            margin-bottom: 20px;
+            width: 100%;
+            
+        }
+        .highlighted {
+            background-color: #ffff00;
+            font-weight: bold;
+        }
+       #ltr{
+			direction: ltr;
+}
+	        table {
+            border-collapse: collapse;
+            width: 100%;
+            direction: ltr;
+        }
+        th, td {
+            border: 2px solid black;
+            padding: 2px;
+            text-align: center;
+        }
+        
+        footer {
+            background-color: #0077be;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    
