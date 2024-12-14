@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmsnflSkkil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tifinagh&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .converter {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        textarea {
+            width: 95%;
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            font-family: 'Noto Sans Tifinagh', sans-serif;
+        }
+
+        button {
+            width: 49%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+            margin: 0 10px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        /* Labels for the toggle */
+        .toggle-label {
+            font-size: 16px;
+        }
+
+        /* Convert From Label */
+        .convert-from-label {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Script Converter</h1>
+        <div class="converter">
+            <textarea id="input" placeholder="Enter text to convert"></textarea>
+            <div class="buttons-container">
+                <button id="paste-btn">Paste</button>
+                <button id="copy-btn">Copy</button>
+            </div>
+            <div class="convert-from-label">Convert From:</div>
+            <div class="toggle-container">
+                <span class="toggle-label">Latin</span>
+                <label class="switch">
+                    <input type="checkbox" id="script-toggle">
+                    <span class="slider round"></span>
+                </label>
+                <span class="toggle-label">Tifinagh</span>
+            </div>
+
+            <button id="convert-btn">Convert</button>
+            <textarea id="output" placeholder="Converted text" readonly></textarea>
+        </div>
+    </div>
+
+    <script>
+        function convertScript(text, fromScript, toScript) {
+    const tifinaghToLatinMap = {
+        'ⴰ': 'a', 'ⴱ': 'b', 'ⴳ': 'g', 'ⴷ': 'd', 'ⴹ': 'ḍ', 'ⴻ': 'e', 'ⴼ': 'f', 'ⴽ': 'k',
+        'ⵀ': 'h', 'ⵃ': 'ḥ', 'ⵄ': 'ɛ', 'ⵅ': 'x', 'ⵇ': 'q', 'ⵉ': 'i', 'ⵊ': 'j', 'ⵍ': 'l',
+        'ⵎ': 'm', 'ⵏ': 'n', 'ⵓ': 'u', 'ⵔ': 'r', 'ⵕ': 'ṛ', 'ⵖ': 'ɣ', 'ⵙ': 's', 'ⵚ': 'ṣ',
+        'ⵛ': 'c', 'ⵜ': 't', 'ⵟ': 'ṭ', 'ⵡ': 'w', 'ⵢ': 'y', 'ⵣ': 'z', 'ⵥ': 'ẓ', 'ⵯ': 'ʷ',
+        // Custom Tifinagh to Latin mappings
+                       'ⴲ': 'ḇ', 'ⴴ': 'ḡ', 'ⴵ': 'ǧ', 'ⴶ': 'ǧ', 'ⴸ': 'ḏ', 'ⴺ': 'ḏ̣', 'ⴾ': 'k',
+'ⴿ': 'ḵ', 'ⵁ': 'h', 'ⵂ': 'h', 'ⵆ': 'x', 'ⵈ': 'q', 'ⵋ': 'j', 'ⵌ': 'j',
+'ⵐ': 'gn', 'ⵑ': 'ng', 'ⵒ': 'p', 'ⵗ': 'ɣ', 'ⵘ': 'ɣ', 'ⵝ': 'ṯ', 'ⵞ': 'č',
+'ⵠ': 'v', 'ⵤ': 'z', 'ⵦ': 'é', 'ⵧ': 'o'
+    };
+
+    const latinToTifinaghMap = {
+        'a': 'ⴰ', 'b': 'ⴱ', 'g': 'ⴳ', 'd': 'ⴷ', 'ḍ': 'ⴹ', 'e': 'ⴻ', 'f': 'ⴼ', 'k': 'ⴽ',
+        'h': 'ⵀ', 'ḥ': 'ⵃ', 'ɛ': 'ⵄ', 'x': 'ⵅ', 'q': 'ⵇ', 'i': 'ⵉ', 'j': 'ⵊ', 'l': 'ⵍ',
+        'm': 'ⵎ', 'n': 'ⵏ', 'u': 'ⵓ', 'r': 'ⵔ', 'ṛ': 'ⵕ', 'ɣ': 'ⵖ', 's': 'ⵙ', 'ṣ': 'ⵚ',
+        'c': 'ⵛ', 't': 'ⵜ', 'ṭ': 'ⵟ', 'w': 'ⵡ', 'y': 'ⵢ', 'z': 'ⵣ', 'ẓ': 'ⵥ', 'ʷ': 'ⵯ',
+        // Custom Latin to Tifinagh mappings
+        'ḇ': 'ⴲ', 'ḡ': 'ⴴ', 'ǧ': 'ⴵ', 'ḏ': 'ⴸ', 'ḏ̣': 'ⴺ',
+'p': 'ⵒ', 'ṯ': 'ⵝ', 'č': 'ⵞ', 'v': 'ⵠ', 'é': 'ⴻ', 'o': 'ⵓ', 'ř': 'ⵍ'
+    };
+
+    let result = '';
+    if (fromScript === 'tifinagh' && toScript === 'latin') {
+        for (let i = 0; i < text.length; i++) {
+            result += tifinaghToLatinMap[text[i]] || text[i];
+        }
+    } else if (fromScript === 'latin' && toScript === 'tifinagh') {
+        text = text.toLowerCase();
+        for (let i = 0; i < text.length; i++) {
+            // Handling custom multi-character mappings like 'ng'
+            if (i + 1 < text.length && latinToTifinaghMap[text[i] + text[i + 1]]) {
+                result += latinToTifinaghMap[text[i] + text[i + 1]];
+                i++; // Skip the next character as it's part of a custom mapping
+            } else {
+                result += latinToTifinaghMap[text[i]] || text[i];
+            }
+        }
+    } else {
+        result = 'Invalid script conversion';
+    }
+
+    return result;
+}
+
+        document.getElementById('convert-btn').addEventListener('click', function() {
+            const inputText = document.getElementById('input').value;
+            const isTifinaghChecked = document.getElementById('script-toggle').checked;
+            const fromScript = isTifinaghChecked ? 'tifinagh' : 'latin';
+            const toScript = isTifinaghChecked ? 'latin' : 'tifinagh';
+
+            const outputText = convertScript(inputText, fromScript, toScript);
+            document.getElementById('output').value = outputText;
+        });
+        document.getElementById('paste-btn').addEventListener('click', function() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    document.getElementById('input').value = text;
+                })
+                .catch(err => {
+                    console.error('Failed to read clipboard contents: ', err);
+                });
+        });
+
+        document.getElementById('copy-btn').addEventListener('click', function() {
+            const outputText = document.getElementById('output').value;
+            navigator.clipboard.writeText(outputText)
+                .then(() => {
+                    console.log('Text copied to clipboard');
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                });
+        });
+    </script>
+</body>
+</html>
