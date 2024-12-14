@@ -299,12 +299,12 @@
 </head>
 <body>
     <header>
-        <h1 data-i18n="tools-title">AmTools</h1>
+               <h1 data-i18n="tools-title">AmTools</h1>
         <div class="button-container">
             <select class="language-select button">
                 <option value="zgh">ⵜⴰⵎⴰⵣⵉⵖⵜ</option>
                 <option value="en">English</option>
-                <option value="ar">عربي</option>
+                <option value="ar">العربية</option>
                 <option value="fr">Français</option>
             </select>
             <button class="dark-mode-toggle button">Toggle Dark Mode</button>
@@ -313,13 +313,12 @@
 
     <main>
         <section>
-            <h1>ⴰⵙⵏⵎ ⵏ ⵜⵉⵔⵔⴰ ⵏ ⵜⵎⴰⵣⵉⵖⵜ</h1>
             <textarea id="inputText" placeholder="ⴰⵔⴰ ⴰⴹⵕⵉⵚ ⵏⵏⴽ ⴷⴰ..."></textarea>
             <div class="button-container">
                 <button id="checkSpelling" data-i18n="check-spelling">ⵙⵏⵎ ⵜⵉⵔⵔⴰ</button>
-                <button id="clearInput" data-i18n="clear-input">ⵙⴼⴹ ⴰⵔⵓ</button>
-                <button id="pasteInput" data-i18n="paste-input">ⵍⵙⵇ ⵙⵖ ⵓⵙⵍⵓⵖⵓ</button>
-                <button id="exportResults" data-i18n="export-results">ⵙⵓⴼⵖ ⵉⵙⵓⴼⵖⵏ</button>
+                <button id="clearInput" data-i18n="clear-input">ⵚⴼⴹ</button>
+                <button id="pasteInput" data-i18n="paste-input">ⵙⵍⵖ ⵙⴳ ⵓⵙⵍⵓⵖⵓ</button>
+                <button id="exportResults" data-i18n="export-results">ⵙⵙⵓⴼⵖ ⴰⵙⵏⵓⵎ</button>
             </div>
             <div id="resultText"></div>
             <div class="button-container">
@@ -353,51 +352,47 @@
 const translations = {
   en: {
     "tools-title": "AmTools",
-    "check-spelling": "Check Spelling",
-    "clear-input": "Clear Input",
-    "paste-input": "Paste from Clipboard",
-    "export-results": "Export Results",
-    "copy-result": "Copy Result",
-    "copyright": "© 2024 AmTools. All rights reserved.",
+    "check-spelling": "Check",
+    "clear-input": "Clear",
+    "paste-input": "Paste",
+    "export-results": "Export",
+    "copy-result": "Copy",
+    "copyright": "AmTools",
     "similar-words": "Similar words:",
     "replace-word": "Replace",
-    "add-to-dictionary": "Add to Dictionary"
   },
   ar: {
-    "tools-title": "أدواتي",
-    "check-spelling": "التحقق الإملائي",
-    "clear-input": "مسح الإدخال",
-    "paste-input": "لصق من الحافظة",
-    "export-results": "تصدير النتائج",
-    "copy-result": "نسخ النتيجة",
-    "copyright": "© 2024 أدواتي. جميع الحقوق محفوظة.",
+    "tools-title": "أم-أدوات",
+    "check-spelling": "تحقق",
+    "clear-input": "مسح",
+    "paste-input": "لصق",
+    "export-results": "تصدير",
+    "copy-result": "نسخ",
+    "copyright": "أم-أدوات",
     "similar-words": "كلمات مشابهة:",
     "replace-word": "استبدال",
-    "add-to-dictionary": "إضافة إلى القاموس"
   },
   fr: {
     "tools-title": "AmTools",
-    "check-spelling": "Vérifier l'orthographe",
-    "clear-input": "Effacer le contenu",
-    "paste-input": "Coller depuis le presse-papiers",
-    "export-results": "Exporter les résultats",
-    "copy-result": "Copier le résultat",
-    "copyright": "© 2024 AmTools. Tous droits réservés.",
+    "check-spelling": "Vérifier",
+    "clear-input": "Effacer",
+    "paste-input": "Coller",
+    "export-results": "Exporter",
+    "copy-result": "Copier",
+    "copyright": "AmTools",
     "similar-words": "Mots similaires:",
     "replace-word": "Remplacer",
-    "add-to-dictionary": "Ajouter au dictionnaire"
   },
   zgh: {
     "tools-title": "ⵉⵎⴰⵙⵙⵏ",
     "check-spelling": "ⵙⵏⵎ ⵜⵉⵔⵔⴰ",
-    "clear-input": "ⵙⴼⴹ ⴰⵔⵓ",
-    "paste-input": "ⵍⵙⵇ ⵙⵖ ⵓⵙⵍⵓⵖⵓ",
-    "export-results": "ⵙⵓⴼⵖ ⵉⵙⵓⴼⵖⵏ",
-    "copy-result": "ⵙⵙⵏⵖⵍ ⴰⵙⵓⴼⵖ",
-    "copyright": "© 2024 ⵉⵎⴰⵙⵙⵏ. ⴽⵓⵍ ⵜⴰⵎⴰⵎⴽⵉⵏ ⵃⴹⴰⵏ.",
-    "similar-words": "ⴰⵡⴰⵍⵏ ⵉⵎⵇⵔⴰⵏⵏ:",
-    "replace-word": "ⵙⵎⴰⵜⵜⵉ",
-    "add-to-dictionary": "ⵔⵏⵓ ⵖⵔ ⵓⵎⴰⵡⴰⵍ"
+    "clear-input": "ⵚⴼⴹ",
+    "paste-input": "ⵙⵍⵖ",
+    "export-results": "ⵙⵙⵓⴼⵖ",
+    "copy-result": "ⵙⵙⵏⵖⵍ",
+    "copyright": "ⴰⵎⵉⵎⴰⵙⵙⵏ",
+    "similar-words": "ⵜⵉⴳⵓⵔⵉⵡⵉⵏ ⵉⵔⵡⴰⵙⵏ:",
+    "replace-word": "ⵙⵏⴼⵍ",
   }
 };
 
