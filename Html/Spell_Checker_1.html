@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="zgh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ⴰⵙⵏⵎ ⵏ ⵜⵉⵔⵔⴰ ⵏ ⵜⵎⴰⵣⵉⵖⵜ</title>
+    <style>
+        :root {
+            /* Light mode colors */
+            --bg-color: #f8f8f8;
+            --text-color: #333;
+            --accent-color: #007bff; /* Blue */
+            --nav-bg-color: #e9ecef;
+            --nav-text-color: #343a40;
+            --section-bg-color: #fff;
+            --footer-bg-color: #343a40;
+            --footer-text-color: #fff;
+            --button-bg-color: #007bff;
+            --button-text-color: #fff;
+            --button-hover-bg-color: #0056b3;
+            --link-color: #007bff;
+            --link-hover-color: #0056b3;
+
+            /* Dark mode colors */
+            --dark-bg-color: #222;
+            --dark-text-color: #eee;
+            --dark-accent-color: #66b3ff; /* Light blue */
+            --dark-nav-bg-color: #444;
+            --dark-nav-text-color: #eee;
+            --dark-section-bg-color: #333;
+            --dark-footer-bg-color: #111;
+            --dark-footer-text-color: #eee;
+            --dark-button-bg-color: #66b3ff;
+            --dark-button-text-color: #222;
+            --dark-button-hover-bg-color: #3399ff;
+            --dark-link-color: #66b3ff;
+            --dark-link-hover-color: #3399ff;
+
+            --highlight-color: #ffdddd;
+            --highlight-hover-color: #ffcccc;
+            --similar-word-color: #007bff;
+            --replaced-word-color: #4CAF50;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            transition: background-color 0.3s, color 0.3s;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.dark-mode {
+            background-color: var(--dark-bg-color);
+            color: var(--dark-text-color);
+        }
+
+        header {
+            background-color: var(--accent-color);
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        body.dark-mode header {
+            background-color: var(--dark-accent-color);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        main {
+            padding: 20px;
+            flex: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--accent-color);
+            font-size: 128%;
+        }
+
+        body.dark-mode h1 {
+            color: var(--dark-accent-color);
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: var(--section-bg-color);
+            color: var(--text-color);
+        }
+
+        body.dark-mode textarea {
+            background-color: var(--dark-section-bg-color);
+            color: var(--dark-text-color);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .button, button {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+        }
+
+        body.dark-mode .button, body.dark-mode button {
+            background-color: var(--dark-button-bg-color);
+            color: var(--dark-button-text-color);
+        }
+
+        .button:hover, button:hover {
+            background-color: var(--button-hover-bg-color);
+        }
+
+        body.dark-mode .button:hover, body.dark-mode button:hover {
+            background-color: var(--dark-button-hover-bg-color);
+        }
+
+        .button:disabled, button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        body.dark-mode .button:disabled, body.dark-mode button:disabled {
+            background-color: #555;
+        }
+
+        #resultText {
+            margin-top: 10px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            min-height: 100px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            background-color: var(--section-bg-color);
+            color: var(--text-color);
+        }
+        body.dark-mode #resultText{
+            background-color: var(--dark-section-bg-color);
+            color: var(--dark-text-color);
+        }
+
+        .highlight {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .highlight:hover {
+            background-color: var(--highlight-hover-color);
+        }
+
+        .grammar-error {
+            color: orange;
+            cursor: pointer;
+        }
+
+        .similar-word {
+            color: var(--similar-word-color);
+            cursor: pointer;
+        }
+
+        body.dark-mode .similar-word {
+            color: var(--dark-link-color);
+        }
+
+        .replaced-word {
+            color: var(--replaced-word-color);
+            cursor: pointer;
+        }
+
+        body.dark-mode .replaced-word {
+            color: var(--dark-link-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: var(--section-bg-color);
+            color: var(--text-color);
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 5px;
+        }
+
+        body.dark-mode .modal-content {
+            background-color: var(--dark-section-bg-color);
+            color: var(--dark-text-color);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        body.dark-mode .close:hover,
+        body.dark-mode .close:focus {
+            color: var(--dark-text-color);
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .pagination button,
+        .pagination span {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        body.dark-mode .pagination button,
+        body.dark-mode .pagination span{
+            background-color: var(--dark-button-bg-color);
+            color: var(--dark-button-text-color);
+        }
+
+        .pagination button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        body.dark-mode .pagination button:disabled{
+            background-color: #555;
+        }
+
+        .pagination .current-page {
+            background-color: var(--accent-color);
+            font-weight: bold;
+        }
+        body.dark-mode .pagination .current-page{
+            background-color: var(--dark-accent-color);
+        }
+
+        #grammarToggle {
+            margin-right: 10px;
+        }
+        footer {
+            background-color: var(--footer-bg-color);
+            color: var(--footer-text-color);
+            text-align: center;
+            padding: 10px;
+            transition: background-color 0.3s;
+            margin-top: auto;
+        }
+        body.dark-mode footer{
+            background-color: var(--dark-footer-bg-color);
+            color: var(--dark-footer-text-color);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1 data-i18n="tools-title">AmTools</h1>
+        <div class="button-container">
+            <select class="language-select button">
+                <option value="zgh">ⵜⴰⵎⴰⵣⵉⵖⵜ</option>
+                <option value="en">English</option>
+                <option value="ar">عربي</option>
+                <option value="fr">Français</option>
+            </select>
+            <button class="dark-mode-toggle button">Toggle Dark Mode</button>
+        </div>
+    </header>
+
+    <main>
+        <section>
+            <h1>ⴰⵙⵏⵎ ⵏ ⵜⵉⵔⵔⴰ ⵏ ⵜⵎⴰⵣⵉⵖⵜ</h1>
+            <textarea id="inputText" placeholder="ⴰⵔⴰ ⴰⴹⵕⵉⵚ ⵏⵏⴽ ⴷⴰ..."></textarea>
+            <div class="button-container">
+                <button id="checkSpelling" data-i18n="check-spelling">ⵙⵏⵎ ⵜⵉⵔⵔⴰ</button>
+                <button id="clearInput" data-i18n="clear-input">ⵙⴼⴹ ⴰⵔⵓ</button>
+                <button id="pasteInput" data-i18n="paste-input">ⵍⵙⵇ ⵙⵖ ⵓⵙⵍⵓⵖⵓ</button>
+                <button id="exportResults" data-i18n="export-results">ⵙⵓⴼⵖ ⵉⵙⵓⴼⵖⵏ</button>
+            </div>
+            <div id="resultText"></div>
+            <div class="button-container">
+                <button id="copyResult" data-i18n="copy-result">ⵙⵙⵏⵖⵍ ⴰⵙⵓⴼⵖ</button>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p data-i18n="copyright">© 2024 AmTools. All rights reserved.</p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">×</span>
+            <p data-i18n="similar-words">ⴰⵡⴰⵍⵏ ⵉⵎⵇⵔⴰⵏⵏ:</p>
+            <p id="modalContent"></p>
+            <div class="pagination">
+                <button id="prevWords"><</button>
+                <span id="pageNumbers"></span>
+                <button id="nextWords">></button>
+            </div>
+            <input type="text" id="editWord" value="">
+            <p></p>
+            <button id="replaceWord" data-i18n="replace-word">ⵙⵎⴰⵜⵜⵉ</button>
+            <button id="addToDictionary" data-i18n="add-to-dictionary">ⵔⵏⵓ ⵖⵔ ⵓⵎⴰⵡⴰⵍ</button>
+        </div>
+    </div>
+
+    <script>
+const translations = {
+  en: {
+    "tools-title": "AmTools",
+    "check-spelling": "Check Spelling",
+    "clear-input": "Clear Input",
+    "paste-input": "Paste from Clipboard",
+    "export-results": "Export Results",
+    "copy-result": "Copy Result",
+    "copyright": "© 2024 AmTools. All rights reserved.",
+    "similar-words": "Similar words:",
+    "replace-word": "Replace",
+    "add-to-dictionary": "Add to Dictionary"
+  },
+  ar: {
+    "tools-title": "أدواتي",
+    "check-spelling": "التحقق الإملائي",
+    "clear-input": "مسح الإدخال",
+    "paste-input": "لصق من الحافظة",
+    "export-results": "تصدير النتائج",
+    "copy-result": "نسخ النتيجة",
+    "copyright": "© 2024 أدواتي. جميع الحقوق محفوظة.",
+    "similar-words": "كلمات مشابهة:",
+    "replace-word": "استبدال",
+    "add-to-dictionary": "إضافة إلى القاموس"
+  },
+  fr: {
+    "tools-title": "AmTools",
+    "check-spelling": "Vérifier l'orthographe",
+    "clear-input": "Effacer le contenu",
+    "paste-input": "Coller depuis le presse-papiers",
+    "export-results": "Exporter les résultats",
+    "copy-result": "Copier le résultat",
+    "copyright": "© 2024 AmTools. Tous droits réservés.",
+    "similar-words": "Mots similaires:",
+    "replace-word": "Remplacer",
+    "add-to-dictionary": "Ajouter au dictionnaire"
+  },
+  zgh: {
+    "tools-title": "ⵉⵎⴰⵙⵙⵏ",
+    "check-spelling": "ⵙⵏⵎ ⵜⵉⵔⵔⴰ",
+    "clear-input": "ⵙⴼⴹ ⴰⵔⵓ",
+    "paste-input": "ⵍⵙⵇ ⵙⵖ ⵓⵙⵍⵓⵖⵓ",
+    "export-results": "ⵙⵓⴼⵖ ⵉⵙⵓⴼⵖⵏ",
+    "copy-result": "ⵙⵙⵏⵖⵍ ⴰⵙⵓⴼⵖ",
+    "copyright": "© 2024 ⵉⵎⴰⵙⵙⵏ. ⴽⵓⵍ ⵜⴰⵎⴰⵎⴽⵉⵏ ⵃⴹⴰⵏ.",
+    "similar-words": "ⴰⵡⴰⵍⵏ ⵉⵎⵇⵔⴰⵏⵏ:",
+    "replace-word": "ⵙⵎⴰⵜⵜⵉ",
+    "add-to-dictionary": "ⵔⵏⵓ ⵖⵔ ⵓⵎⴰⵡⴰⵍ"
+  }
+};
+
+const languageSelect = document.querySelector(".language-select");
+const elementsToTranslate = document.querySelectorAll("[data-i18n]");
+
+languageSelect.addEventListener("change", () => {
+  const selectedLanguage = languageSelect.value;
+  setLanguage(selectedLanguage);
+});
+
+function setLanguage(language) {
+  elementsToTranslate.forEach(element => {
+    const key = element.getAttribute("data-i18n");
+    element.textContent = translations[language][key];
+  });
+}
+
+// Set initial language based on user's preference or default to English
+const userLanguage = navigator.language || navigator.userLanguage;
+const initialLanguage = userLanguage.startsWith("ar") ? "ar" : userLanguage.startsWith("fr") ? "fr" : userLanguage.startsWith("zgh") ? "zgh" : "en";
+setLanguage(initialLanguage);
+languageSelect.value = initialLanguage;
+
+        let dictionary = new Set();
+        let userDictionary = new Set();
+        let grammarRules = [];
+        let currentWordElement = null;
+        let currentWordText = '';
+        let allSimilarWords = [];
+        let currentWordIndex = 0;
+
+        const similarLetters = {
+            'ⵣ': 'ⵥ', 'ⵥ': 'ⵣ',
+            'ⴷ': 'ⴹ', 'ⴹ': 'ⴷ',
+            'ⵜ': 'ⵟ', 'ⵟ': 'ⵜ',
+            'ⵟ': 'ⴹⵜ', 'ⴹⵜ': 'ⵟ',
+            'ⵔ': 'ⵕ', 'ⵕ': 'ⵔ',
+            'ⵙ': 'ⵚ', 'ⵚ': 'ⵙ'
+        };
+
+        const vowels = new Set(['ⴰ', 'ⵉ', 'ⵓ']);
+
+        function loadDictionary(url, dictSet) {
+            fetch(url)
+                .then(response => response.text())
+                .then(text => {
+                    const words = text.split('\n').map(word => word.trim());
+                    words.forEach(word => dictSet.add(word));
+                    console.log('Dictionary loaded from', url);
+                })
+                .catch(error => console.error('Error loading dictionary:', error));
+        }
+
+        loadDictionary('Dictionary.txt', dictionary);
+        loadDictionary('user_dict.txt', userDictionary);
+
+        function saveToUserDictionary(word) {
+            fetch('user_dict.txt', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ word })
+            })
+            .then(response => {
+                if (response.ok) {
+                    userDictionary.add(word);
+                    console.log(`Added "${word}" to user dictionary`);
+                    alert(`"${word}" ⵉⵜⵜⵓⵔⵏⴰ ⵖⵔ ⵓⵎⴰⵡⴰⵍ ⵏⵏⴽ ⴰⵡⴷⵎⴰⵡⵏ.`);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving to user dictionary:', error);
+                alert('ⵓⵔ ⵉⵍⵍⵉ ⵓⵔⵏⵓ ⵏ ⵡⴰⵡⴰⵍ ⵖⵔ ⵓⵎⴰⵡⴰⵍ ⵏⵏⴽ ⴰⵡⴷⵎⴰⵡⵏ. ⵎⴽ ⵜⵓⴼⵉⴷ ⴰⵔⵎ ⴷⴰⵖ.');
+            });
+        }
+
+        function levenshteinDistance(a, b) {
+            if (a.length === 0) return b.length;
+            if (b.length === 0) return a.length;
+
+            const matrix = [];
+
+            for (let i = 0; i <= b.length; i++) {
+                matrix[i] = [i];
+            }
+
+            for (let j = 0; j <= a.length; j++) {
+                matrix[0][j] = j;
+            }
+
+            for (let i = 1; i <= b.length; i++) {
+                for (let j = 1; j <= a.length; j++) {
+                    if (b.charAt(i - 1) === a.charAt(j - 1)) {
+                        matrix[i][j] = matrix[i - 1][j - 1];
+                    } else {
+                        matrix[i][j] = Math.min(
+                            matrix[i - 1][j - 1] + 1,
+                            matrix[i][j - 1] + 1,
+                            matrix[i - 1][j] + 1
+                        );
+                    }
+                }
+            }
+
+            return matrix[b.length][a.length];
+        }
+
+        function findSimilarWords(word, dictionary, maxDistance = 2) {
+            let similarWords = Array.from(dictionary).filter(dictWord => 
+                levenshteinDistance(word, dictWord) <= maxDistance
+            );
+
+            // Check for ⵢ/ⵉ and ⵡ/ⵓ at the beginning
+            if (word.startsWith('ⵢ')) {
+                const altWord = 'ⵉ' + word.slice(1);
+                if (dictionary.has(altWord)) similarWords.unshift(altWord);
+            } else if (word.startsWith('ⵡ')) {
+                const altWord = 'ⵓ' + word.slice(1);
+                if (dictionary.has(altWord)) similarWords.unshift(altWord);
+            }
+
+            // Check without vowels
+            const wordWithoutVowels = Array.from(word).filter(char => !vowels.has(char)).join('');
+            dictionary.forEach(dictWord => {
+                const dictWordWithoutVowels = Array.from(dictWord).filter(char => !vowels.has(char)).join('');
+                if (wordWithoutVowels === dictWordWithoutVowels && !similarWords.includes(dictWord)) {
+                    similarWords.push(dictWord);
+                }
+            });
+
+            // Check with similar letters
+            for (let i = 0; i < word.length; i++) {
+                if (similarLetters[word[i]]) {
+                    const altWord = word.slice(0, i) + similarLetters[word[i]] + word.slice(i + 1);
+                    if (dictionary.has(altWord) && !similarWords.includes(altWord)) {
+                        similarWords.push(altWord);
+                    }
+                }
+            }
+
+            return similarWords;
+        }
+
+        function showModal(word, similarWords) {
+            const modal = document.getElementById("myModal");
+            const modalContent = document.getElementById("modalContent");
+            document.getElementById("editWord").value = word;
+            allSimilarWords = similarWords;
+            currentWordIndex = 0;
+            updateModalContent();
+            modal.style.display = "block";
+        }
+
+function updateModalContent() {
+            const modalContent = document.getElementById("modalContent");
+            const start = currentWordIndex;
+            const end = Math.min(start + 10, allSimilarWords.length);
+            const currentWords = allSimilarWords.slice(start, end);
+            modalContent.innerHTML = currentWords.map(w => `<span class="similar-word">${w}</span>`).join(', ');
+            
+            document.querySelectorAll('.similar-word').forEach(element => {
+                element.addEventListener('click', () => {
+                    document.getElementById("editWord").value = element.innerText;
+                });
+            });
+
+            document.getElementById("prevWords").disabled = start === 0;
+            document.getElementById("nextWords").disabled = end >= allSimilarWords.length;
+
+            // Update pagination
+            const totalPages = Math.ceil(allSimilarWords.length / 10);
+            const currentPage = Math.floor(start / 10) + 1;
+            let pageNumbers = '';
+
+            if (currentPage > 1) {
+                pageNumbers += `<span>${currentPage - 1}</span>`;
+            }
+            pageNumbers += `<span class="current-page">${currentPage}</span>`;
+            if (currentPage < totalPages) {
+                pageNumbers += `<span>${currentPage + 1}</span>`;
+            }
+
+            document.getElementById("pageNumbers").innerHTML = pageNumbers;
+        }
+
+        function handleWordClick(event) {
+            currentWordElement = event.target;
+            currentWordText = currentWordElement.innerText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+            const similarWords = findSimilarWords(currentWordText, dictionary).concat(findSimilarWords(currentWordText, userDictionary));
+            showModal(currentWordText, similarWords);
+        }
+
+        function replaceWord(newWord) {
+            const originalWord = currentWordElement.innerText;
+            currentWordElement.innerHTML = newWord;
+            currentWordElement.className = "highlight replaced-word";
+            currentWordElement.style.color = "green";
+            document.querySelectorAll('.replaced-word').forEach(element => {
+                element.addEventListener('click', handleWordClick);
+            });
+            if (!dictionary.has(newWord) && !userDictionary.has(newWord)) {
+                saveToUserDictionary(newWord);
+            }
+        }
+
+        document.getElementById('checkSpelling').addEventListener('click', function() {
+            const text = document.getElementById('inputText').value;
+            const words = text.split(/(\s+|\b)/);
+            let result = '';
+
+            words.forEach(word => {
+                const cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "");
+                if (cleanWord.trim().length > 0 && !dictionary.has(cleanWord) && !userDictionary.has(cleanWord)) {
+                    result += `<span class="highlight" style="color: red;">${word}</span>`;
+                } else {
+                    result += `<span class="highlight">${word}</span>`;
+                }
+            });	
+
+            document.getElementById('resultText').innerHTML = result;
+            document.querySelectorAll('.highlight').forEach(element => {
+                element.addEventListener('click', handleWordClick);
+            });
+        });
+
+       document.getElementById('replaceWord').addEventListener('click', function() {
+            const newWord = document.getElementById('editWord').value;
+            replaceWord(newWord);
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        });
+
+        document.getElementById('addToDictionary').addEventListener('click', function() {
+            const newWord = document.getElementById('editWord').value;
+            saveToUserDictionary(newWord);
+        });
+
+        document.querySelector(".close").addEventListener('click', function() {
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
+        });
+
+        document.getElementById('prevWords').addEventListener('click', function() {
+            if (currentWordIndex > 0) {
+                currentWordIndex -= 10;
+                updateModalContent();
+            }
+        });
+
+        document.getElementById('nextWords').addEventListener('click', function() {
+            if (currentWordIndex + 10 < allSimilarWords.length) {
+                currentWordIndex += 10;
+                updateModalContent();
+            }
+        });
+
+        document.getElementById('clearInput').addEventListener('click', function() {
+            document.getElementById('inputText').value = '';
+        });
+
+        document.getElementById('pasteInput').addEventListener('click', async function() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('inputText').value = text;
+            } catch (err) {
+                console.error('Failed to read clipboard contents: ', err);
+                alert('ⵓⵔ ⵉⵍⵍⵉ ⵓⵖⴰⵍ ⵏ ⵓⵙⵍⵓⵖⵓ. ⵎⴽ ⵜⵓⴼⵉⴷ ⴰⵔⵎ ⴷⴰⵖ.');
+            }
+        });
+
+        document.getElementById('copyResult').addEventListener('click', async function() {
+            const resultText = document.getElementById('resultText').innerText;
+            try {
+                await navigator.clipboard.writeText(resultText);
+                alert('ⵉⵜⵜⵓⵙⵙⵏⵖⵍ ⵓⵙⵓⴼⵖ ⵖⵔ ⵓⵙⵍⵓⵖⵓ!');
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('ⵓⵔ ⵉⵍⵍⵉ ⵓⵙⵙⵏⵖⵍ ⵏ ⵓⴹⵕⵉⵚ. ⵎⴽ ⵜⵓⴼⵉⴷ ⴰⵔⵎ ⴷⴰⵖ.');
+            }
+        });
+
+        window.onclick = function(event) {
+            const modal = document.getElementById("myModal");
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        document.getElementById('exportResults').addEventListener('click', function() {
+            const resultText = document.getElementById('resultText').innerText;
+            const blob = new Blob([resultText], {type: "text/plain;charset=utf-8"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = 'spell_check_results.txt';
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        // Dark mode toggle
+        const darkModeToggle = document.querySelector(".dark-mode-toggle");
+        darkModeToggle.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+        });
+    </script>
+</body>
+</html>
