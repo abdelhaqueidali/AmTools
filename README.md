@@ -13,3 +13,12 @@ Amazigh resources (Dictionaries, information regarding Amazigh related topics)
 <br>
 https://abdelhaqueidali.github.io/AmTools/
 
+<br> Script converter Latin Tifinagh 
+https://abdelhaqueidali.github.io/AmTools/AmsnflSkkil.html
+<br> Numbers To Words 
+https://abdelhaqueidali.github.io/AmTools/NumberConverter.html
+<br> Spell Checker 
+https://abdelhaqueidali.github.io/AmTools/SpellChecker.html
+
+
+
