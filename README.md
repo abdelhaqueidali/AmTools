@@ -8,3 +8,8 @@ Amazigh Calendar
 <br>
 Amazigh resources (Dictionaries, information regarding Amazigh related topics)
 ...etc
+<br>
+# MAIN PAGE #
+<br>
+https://abdelhaqueidali.github.io/AmTools/
+
