@@ -9,8 +9,8 @@ Amazigh Calendar
 Amazigh resources (Dictionaries, information regarding Amazigh related topics)
 ...etc
 <br>
-# MAIN PAGE #
-<br>
+# Tools #
+<br> Main
 https://abdelhaqueidali.github.io/AmTools/
 
 <br> Script converter Latin Tifinagh 
