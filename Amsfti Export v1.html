@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazigh Verb Conjugator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .input-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: 22%;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .highlight {
+            color: red;
+            font-weight: bold;
+        }
+        .export-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .export-buttons button {
+            width: 48%;
+        }
+    </style>
+</head>
+<body>
+    <h1>Amazigh Verb Conjugator</h1>
+    <div class="input-container">
+        <input type="text" id="urmirInput" placeholder="ⵓⵔⵎⵉⵔ">
+        <input type="text" id="usmidInput" placeholder="ⵓⵙⵎⵉⴷ">
+        <input type="text" id="usmidAnabawInput" placeholder="ⵓⵙⵎⵉⴷ ⴰⵏⴰⴱⴰⵡ">
+        <input type="text" id="arusmidInput" placeholder="ⴰⵔⵓⵙⵎⵉⴷ">
+    </div>
+    <button onclick="conjugateVerb()">ⵙⴼⵜⵉ</button>
+    <div id="results"></div>
+    <div class="export-buttons">
+        <button onclick="exportJSON()">Export JSON</button>
+        <button onclick="exportTXT()">Export TXT</button>
+    </div>
+        <div class="input-container">
+            Example: ⵓⵔⵎⵉⵔ:ⵖⵔ</br>ⵓⵙⵎⵉⴷ:ⵖⵔⴰ\ⵖⵔⵉ</br>ⵓⵙⵎⵉⴷ ⴰⵏⴰⴱⴰⵡ:ⵖⵔⵉ</br>ⴰⵔⵓⵙⵎⵉⴷ:ⴰⵇⵇⵔⴰ
+            </div>
+    <script>
+        const tenses = ['ⵓⵔⵎⵉⵔ (ⴰⴷ.., ⵔⴰⴷ..)', 'ⵓⵙⵎⵉⴷ (..ⵢⴰⴷ)', 'ⵓⵙⵎⵉⴷ ⴰⵏⴰⴱⴰⵡ (ⵓⵔ ⵢⴰⴷ..)', 'ⴰⵔⵓⵙⵎⵉⴷ (ⵔⴰⴷ.., ⴰⴷ..)', 'ⴰⵏⴰⴹ', 'ⴰⵏⴰⴹ ⵓⵙⵙⵉⴷ'];
+        const pronouns = [
+            ['ⵏⴽⴽ', 'ⵏⴽⴽ'],
+            ['ⴽⵢⵢ', 'ⴽⵎⵎ'],
+            ['ⵏⵜⵜⴰ', 'ⵏⵜⵜⴰⵜ'],
+            ['ⵏⴽⴽⵏⵉ', 'ⵏⴽⴽⵏⵜⵉ'],
+            ['ⴽⵏⵏⵉ', 'ⴽⵏⵏⵉⵏⵜⵉ'],
+            ['ⵏⵉⵜⵏⵉ', 'ⵏⵉⵜⵏⵜⵉ']
+        ];
+        const anadPronouns = [
+            ['ⴽⵢⵢ', 'ⴽⵎⵎ'],
+            ['ⴽⵏⵏⵉ1', 'ⴽⵏⵏⵉⵏⵜⵉ1'],
+            ['ⴽⵏⵏⵉ2', 'ⴽⵏⵏⵉⵏⵜⵉ2']
+        ];
+
+        let conjugationResults = {};
+
+        function conjugateVerb() {
+            const urmirVerb = document.getElementById('urmirInput').value;
+            const usmidVerb = document.getElementById('usmidInput').value;
+            const usmidAnabawVerb = document.getElementById('usmidAnabawInput').value;
+            const arusmidVerb = document.getElementById('arusmidInput').value;
+
+            let results = '';
+            conjugationResults = {};
+
+            tenses.forEach((tense, index) => {
+                let verb;
+                if (index === 0 || index === 4) {
+                    verb = urmirVerb;
+                } else if (index === 1) {
+                    verb = usmidVerb;
+                } else if (index === 2) {
+                    verb = usmidAnabawVerb;
+                } else if (index === 3 || index === 5) {
+                    verb = arusmidVerb;
+                }
+
+                results += `<h2>${tense}</h2>`;
+                results += '<table>';
+                results += '<tr><th>ⴰⵎⴰⵢ</th><th>ⵓⵏⵜⵉ</th></tr>';
+
+                conjugationResults[tense] = {};
+
+                if (index === 4 || index === 5) {
+                    anadPronouns.forEach(([male, female], idx) => {
+                        const maleConjugation = conjugate(verb, male, tense, idx);
+                        const femaleConjugation = conjugate(verb, female, tense, idx);
+                        results += `<tr><td>${maleConjugation}</td><td>${femaleConjugation}</td></tr>`;
+                        conjugationResults[tense][male] = maleConjugation;
+                        conjugationResults[tense][female] = femaleConjugation;
+                    });
+                } else {
+                    pronouns.forEach(([male, female]) => {
+                        const maleConjugation = conjugate(verb, male, tense);
+                        const femaleConjugation = conjugate(verb, female, tense);
+                        results += `<tr><td>${maleConjugation}</td><td>${femaleConjugation}</td></tr>`;
+                        conjugationResults[tense][male] = maleConjugation;
+                        conjugationResults[tense][female] = femaleConjugation;
+                    });
+                }
+
+                results += '</table>';
+            });
+
+            document.getElementById('results').innerHTML = results;
+        }
+
+        function conjugate(verb, pronoun, tense, idx) {
+            if (!verb) return '';
+
+            let conjugated = '';
+            const [verbForm1, verbForm2] = verb.split('\\');
+
+            let verbToUse = verbForm1;
+            if (verbForm2 && !['ⵏⴽⴽ', 'ⴽⵢⵢ', 'ⴽⵎⵎ'].includes(pronoun)) {
+                verbToUse = verbForm2;
+            }
+
+            if (tense === 'ⴰⵏⴰⴹ' || tense === 'ⴰⵏⴰⴹ ⵓⵙⵙⵉⴷ') {
+                if (pronoun === 'ⵏⴽⴽ') {
+                    conjugated = `${pronoun} ${verbToUse}`;
+                } else if (pronoun === 'ⴽⵢⵢ' || pronoun === 'ⴽⵎⵎ') {
+                    conjugated = `${pronoun} <span>${verbToUse}</span>`;
+                } else if (pronoun === 'ⴽⵏⵏⵉ1' || pronoun === 'ⴽⵏⵏⵉⵏⵜⵉ1' || pronoun === 'ⴽⵏⵏⵉ2' || pronoun === 'ⴽⵏⵏⵉⵏⵜⵉ2') {
+                    let suffix;
+                    let ending = '';
+                    if (idx === 1) { // First ⴽⵏⵏⵉ and ⴽⵏⵏⵉⵏⵜⵉ
+                        suffix = pronoun.startsWith('ⴽⵏⵏⵉ1') ? 'ⵎ' : 'ⵎⵜ';
+                    } else { // Second ⴽⵏⵏⵉ2 and ⴽⵏⵏⵉⵏⵜⵉ2
+                        suffix = pronoun.startsWith('ⴽⵏⵏⵉ2') ? 'ⴰⵜ' : 'ⴰⵎⵜ';
+                        ending = verbToUse.endsWith('ⴰ') ? 'ⵢ' : verbToUse.endsWith('ⵉ') ? 'ⵢ' : verbToUse.endsWith('ⵓ') ? 'ⵢ' : '';
+                    }
+                    conjugated = `${pronoun.replace(/[12]/, '')} ${verbToUse}${ending}<span class="highlight">${suffix}</span>`;
+                }
+            } else {
+                let prefix = '';
+                let suffix = '';
+
+                switch (pronoun) {
+                    case 'ⵏⴽⴽ':
+                        suffix = 'ⵖ';
+                        break;
+                    case 'ⴽⵢⵢ':
+                    case 'ⴽⵎⵎ':
+                        prefix = 'ⵜ';
+                        suffix = 'ⴷ';
+                        break;
+                    case 'ⵏⵜⵜⴰ':
+                        prefix = 'ⵉ';
+                        break;
+                    case 'ⵏⵜⵜⴰⵜ':
+                        prefix = 'ⵜ';
+                        break;
+                    case 'ⵏⴽⴽⵏⵉ':
+                    case 'ⵏⴽⴽⵏⵜⵉ':
+                        prefix = 'ⵏ';
+                        break;
+                    case 'ⴽⵏⵏⵉ':
+                        prefix = 'ⵜ';
+                        suffix = 'ⵎ';
+                        break;
+                    case 'ⴽⵏⵏⵉⵏⵜⵉ':
+                        prefix = 'ⵜ';
+                        suffix = 'ⵎⵜ';
+                        break;
+                    case 'ⵏⵉⵜⵏⵉ':
+                        suffix = 'ⵏ';
+                        break;
+                    case 'ⵏⵉⵜⵏⵜⵉ':
+                        suffix = 'ⵏⵜ';
+                        break;
+                }
+
+                if (prefix === 'ⵜ' && verbToUse.startsWith('ⵜⵜⴻ')) {
+                    prefix = '';
+                } else if (prefix === 'ⵜ' && verbToUse.startsWith('ⵜⵜ')) {
+                    prefix = 'ⵜⴻ';
+                } else if (prefix === 'ⵉ' && ['ⵉ', 'ⴰ', 'ⵓ'].includes(verbToUse[0])) {
+                    prefix = 'ⵢ';
+                }
+
+                conjugated = `${pronoun} <span class="highlight">${prefix}</span>${verbToUse}<span class="highlight">${suffix}</span>`;
+
+                // Apply the ⵜⴻⵜⵜⴻⵜⵜ- -> ⵜⵜⴻⵜⵜ- correction
+                conjugated = conjugated.replace(/ⵜⴻⵜⵜⴻⵜⵜ/g, 'ⵜⵜⴻⵜⵜ');
+            }
+
+            return conjugated;
+        }
+
+        function exportJSON() {
+            const jsonString = JSON.stringify(conjugationResults, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'amazigh_conjugations.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportTXT() {
+            let txtContent = '';
+            for (const [tense, pronouns] of Object.entries(conjugationResults)) {
+                txtContent += `${tense}\n`;
+                txtContent += '------------------------\n';
+                for (const [pronoun, conjugation] of Object.entries(pronouns)) {
+                    txtContent += `${pronoun}: ${conjugation.replace(/<[^>]+>/g, '')}\n`;
+                }
+                txtContent += '\n';
+            }
+            const blob = new Blob([txtContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'amazigh_conjugations.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
