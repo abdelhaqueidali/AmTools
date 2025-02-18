@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazigh Dictionary</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-gray: #f5f6fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-gray);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        #searchInput {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            border: 2px solid var(--accent-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .results {
+            margin-top: 2rem;
+        }
+
+        .word-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .word-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 0.5rem;
+        }
+
+        .word {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .category {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: var(--secondary-color);
+            font-size: 1.2rem;
+        }
+
+        #status {
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .error {
+            color: #e74c3c;
+            background-color: #fde8e8;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Amazigh Dictionary</h1>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Loading dictionary..." disabled>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="status">Loading dictionary...</div>
+        <div id="results" class="results"></div>
+    </main>
+
+    <script>
+        let db = null;
+        const searchInput = document.getElementById('searchInput');
+        const resultsDiv = document.getElementById('results');
+        const statusDiv = document.getElementById('status');
+
+        // Initialize SQL.js and load database
+        async function initDatabase() {
+            try {
+                const SQL = await initSqlJs({
+                    locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+                });
+
+                const response = await fetch('dglai14.db');
+                const arrayBuffer = await response.arrayBuffer();
+                
+                db = new SQL.Database(new Uint8Array(arrayBuffer));
+                searchInput.disabled = false;
+                searchInput.placeholder = "Start typing to search...";
+                statusDiv.style.display = 'none';
+                performSearch(''); // Initial load of all entries
+            } catch (err) {
+                console.error('Error loading database:', err);
+                statusDiv.innerHTML = `<div class="error">Error loading dictionary: ${err.message}</div>`;
+            }
+        }
+
+        // Initialize the database when page loads
+        initDatabase();
+
+        // Search functionality
+        searchInput.addEventListener('input', debounce(() => {
+            performSearch(searchInput.value);
+        }, 300));
+
+        function performSearch(query) {
+            if (!db) return;
+
+            const searchTerm = `%${query}%`;
+            const sql = `
+                SELECT * FROM lexie 
+                WHERE lexie LIKE ? 
+                OR api LIKE ? 
+                OR remarque LIKE ? 
+                OR variante LIKE ?
+                OR cg LIKE ?
+                LIMIT 50
+            `;
+
+            try {
+                const results = db.exec({
+                    sql: sql,
+                    bind: [searchTerm, searchTerm, searchTerm, searchTerm, searchTerm]
+                });
+
+                displayResults(results);
+            } catch (err) {
+                console.error('Search error:', err);
+                resultsDiv.innerHTML = `<div class="error">Search error: ${err.message}</div>`;
+            }
+        }
+
+        function displayResults(results) {
+            if (!results.length || !results[0].values.length) {
+                resultsDiv.innerHTML = '<div class="no-results">No results found</div>';
+                return;
+            }
+
+            const columns = results[0].columns;
+            const html = results[0].values.map(row => {
+                const entry = {};
+                columns.forEach((col, i) => entry[col] = row[i]);
+                
+                return `
+                    <div class="word-card">
+                        <div class="word-header">
+                            <div class="word">${entry.lexie || ''}</div>
+                            <div class="category">${entry.cg || ''}</div>
+                        </div>
+                        <div class="details">
+                            ${entry.api ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Transcription:</span>
+                                    <span>${entry.api}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.remarque ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Notes:</span>
+                                    <span>${entry.remarque}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.eadata ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Construct State:</span>
+                                    <span>${entry.eadata}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.pldata ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Plural:</span>
+                                    <span>${entry.pldata}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.acc ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Accomplished:</span>
+                                    <span>${entry.acc}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.acc_neg ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Negative Accomplished:</span>
+                                    <span>${entry.acc_neg}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.inacc ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Unaccomplished:</span>
+                                    <span>${entry.inacc}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.variante ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Variants:</span>
+                                    <span>${entry.variante}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.fel ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Feminine:</span>
+                                    <span>${entry.fel}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.fea ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Feminine Construct:</span>
+                                    <span>${entry.fea}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.fpel ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Feminine Plural:</span>
+                                    <span>${entry.fpel}</span>
+                                </div>
+                            ` : ''}
+                            ${entry.fpea ? `
+                                <div class="detail-item">
+                                    <span class="detail-label">Feminine Plural Construct:</span>
+                                    <span>${entry.fpea}</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // Utility function for debouncing search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>
